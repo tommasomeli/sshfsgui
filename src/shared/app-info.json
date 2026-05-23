@@ -1,0 +1,7 @@
+{
+  "name": "SSHFS GUI",
+  "slug": "sshfsgui",
+  "appId": "com.tommasomeli.sshfsgui",
+  "developer": "Tommaso Meli",
+  "github": "https://github.com/tommasomeli/sshfsgui"
+}
