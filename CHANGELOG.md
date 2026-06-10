@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.1
+
+- UI fixes and refinements
+- Smaller build via improved compression
+
 ## 1.0.0
 
 Initial release.

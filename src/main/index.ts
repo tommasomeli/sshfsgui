@@ -21,6 +21,7 @@ import { checkForUpdates } from './updater';
 const isDev = !app.isPackaged;
 let win: BrowserWindow | null = null;
 let tray: Tray | null = null;
+let systemReadySeen = false;
 
 function buildTrayIcon(): Electron.NativeImage {
   const s = 18;
@@ -122,6 +123,8 @@ function createWindow(): void {
 function registerIpc(): void {
   ipcMain.handle('system:check', () => checkSystemRequirements());
   ipcMain.handle('system:install-instructions', () => getInstallInstructions());
+  ipcMain.handle('system:ready-seen', () => systemReadySeen);
+  ipcMain.handle('system:mark-ready-seen', () => { systemReadySeen = true; });
 
   ipcMain.handle('servers:list', async (): Promise<ServerWithStatus[]> => {
     const configs = loadConfigs();

@@ -13,17 +13,31 @@ export function SystemRequirementsBanner() {
   const [instructions, setInstructions] = useState<InstallInstructions | null>(null);
   const [dismissed, setDismissed] = useState(false);
   const [copiedKey, setCopiedKey] = useState<HomebrewStackKey | null>(null);
+  const [readyChecked, setReadyChecked] = useState(false);
+  const [readySeen, setReadySeen] = useState(false);
 
   useEffect(() => {
     window.sshfs.installInstructions().then(setInstructions);
   }, []);
 
+  useEffect(() => {
+    window.sshfs.wasSystemReadySeen().then((seen) => {
+      setReadySeen(seen);
+      setReadyChecked(true);
+    });
+  }, []);
+
+  const fuseBackendOk = !!system && (system.fuseT.installed || system.macfuse.installed);
+  const allOk = !!system && system.sshfs.installed && fuseBackendOk;
+
+  useEffect(() => {
+    if (allOk && readyChecked && !readySeen) window.sshfs.markSystemReadySeen();
+  }, [allOk, readyChecked, readySeen]);
+
   if (!system || dismissed) return null;
 
-  const fuseBackendOk = system.fuseT.installed || system.macfuse.installed;
-  const allOk = system.sshfs.installed && fuseBackendOk;
-
   if (allOk) {
+    if (!readyChecked || readySeen) return null;
     return (
       <div
         onAnimationEnd={() => setDismissed(true)}

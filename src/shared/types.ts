@@ -66,6 +66,8 @@ export interface AppSettings {
 export interface SshfsApi {
   checkSystem(): Promise<SystemStatus>;
   installInstructions(): Promise<InstallInstructions>;
+  wasSystemReadySeen(): Promise<boolean>;
+  markSystemReadySeen(): Promise<void>;
   listServers(): Promise<ServerWithStatus[]>;
   saveServer(input: ServerInput): Promise<ServerWithStatus>;
   deleteServer(id: string): Promise<void>;

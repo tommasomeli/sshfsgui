@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Copy,
@@ -5,6 +6,7 @@ import {
   Download,
   FolderOpen,
   HardDrive,
+  Loader2,
   Pencil,
   Play,
   Star,
@@ -29,22 +31,29 @@ interface Props {
 export function ServerCard({ server, onEdit, selected, onToggleSelect }: Props) {
   const { t } = useTranslation();
   const { mount, unmount, remove, toggleFavorite, clone } = useServersStore();
+  const [busy, setBusy] = useState(false);
 
   async function handleMount() {
+    setBusy(true);
     try {
       await mount(server.id);
       toast.success(t('server.mounted', { name: server.name }));
     } catch (err) {
       toast.error(t('server.mountFailed', { error: (err as Error).message }));
+    } finally {
+      setBusy(false);
     }
   }
 
   async function handleUnmount() {
+    setBusy(true);
     try {
       await unmount(server.id);
       toast.success(t('server.unmounted', { name: server.name }));
     } catch (err) {
       toast.error(t('server.unmountFailed', { error: (err as Error).message }));
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -103,13 +112,13 @@ export function ServerCard({ server, onEdit, selected, onToggleSelect }: Props) 
       </CardContent>
       <CardFooter className="flex flex-wrap gap-1">
         {server.mounted ? (
-          <Button size="sm" variant="outline" onClick={handleUnmount}>
-            <CircleStop className="size-4" />
+          <Button size="sm" variant="outline" onClick={handleUnmount} disabled={busy}>
+            {busy ? <Loader2 className="size-4 animate-spin" /> : <CircleStop className="size-4" />}
             {t('server.unmount')}
           </Button>
         ) : (
-          <Button size="sm" onClick={handleMount}>
-            <Play className="size-4" />
+          <Button size="sm" onClick={handleMount} disabled={busy}>
+            {busy ? <Loader2 className="size-4 animate-spin" /> : <Play className="size-4" />}
             {t('server.mount')}
           </Button>
         )}

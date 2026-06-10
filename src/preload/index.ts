@@ -4,6 +4,8 @@ import type { SshfsApi } from '@shared/types';
 const api: SshfsApi = {
   checkSystem: () => ipcRenderer.invoke('system:check'),
   installInstructions: () => ipcRenderer.invoke('system:install-instructions'),
+  wasSystemReadySeen: () => ipcRenderer.invoke('system:ready-seen'),
+  markSystemReadySeen: () => ipcRenderer.invoke('system:mark-ready-seen'),
   listServers: () => ipcRenderer.invoke('servers:list'),
   saveServer: (input) => ipcRenderer.invoke('servers:save', input),
   deleteServer: (id) => ipcRenderer.invoke('servers:delete', id),

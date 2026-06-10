@@ -1,6 +1,6 @@
 {
   "name": "sshfsgui",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple SSHFS GUI for macOS",
   "main": "./out/main/index.js",
   "author": "tommasomeli",
@@ -38,16 +38,10 @@
     "macos",
     "electron"
   ],
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "electron",
-      "esbuild",
-      "keytar"
-    ]
-  },
   "build": {
     "appId": "com.tommasomeli.sshfsgui",
     "productName": "SSHFS GUI",
+    "compression": "maximum",
     "directories": {
       "output": "release/${version}"
     },
@@ -55,6 +49,7 @@
       "out/**/*",
       "package.json"
     ],
+    "afterPack": "scripts/after-pack.js",
     "afterSign": "scripts/notarize.js",
     "mac": {
       "category": "public.app-category.utilities",
