@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+## 1.1.0
+
+- Migrated the app shell from Electron to Tauri 2
+
 ## 1.0.1
 
 - UI fixes and refinements

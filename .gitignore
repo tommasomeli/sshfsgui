@@ -1,9 +1,7 @@
 node_modules
 *lock.yaml
-out
 dist
-release
-resources/build
 .DS_Store
 *.log
 .vite
+src-tauri/target

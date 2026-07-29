@@ -20,8 +20,8 @@ You'll receive an acknowledgement within 7 days. Coordinated disclosure timeline
 
 SSHFS GUI is a **local desktop app** that:
 
-- Stores server configurations on disk under the user's Electron `userData` directory.
-- Stores SSH passwords in the macOS Keychain via `keytar`.
+- Stores server configurations on disk under the user's app data directory.
+- Stores SSH passwords in the macOS Keychain via the Rust `keyring` crate.
 - Runs `sshfs` and system mount tools with the privileges of the logged-in user.
 - Imports and exports JSON configuration files chosen by the user.
 

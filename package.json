@@ -1,8 +1,8 @@
 {
   "name": "sshfsgui",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "A simple SSHFS GUI for macOS",
-  "main": "./out/main/index.js",
+  "type": "module",
   "author": "tommasomeli",
   "license": "ISC",
   "homepage": "https://github.com/tommasomeli/sshfsgui#readme",
@@ -10,23 +10,25 @@
     "url": "https://github.com/tommasomeli/sshfsgui/issues"
   },
   "scripts": {
-    "dev": "electron-vite dev",
-    "start": "electron-vite preview",
-    "prebuild": "npm run icons -- --padding 80",
-    "build": "electron-vite build",
-    "build:mac": "npm run build && electron-builder --mac",
-    "build:mac:unsigned": "npm run build && electron-builder --mac -c.mac.identity=null",
-    "build:mac:all": "npm run build:mac -- --arm64 --x64",
-    "build:mac:arm64": "npm run build:mac -- --arm64",
-    "build:mac:x64": "npm run build:mac -- --x64",
-    "build:mac:universal": "npm run build:mac -- --universal",
+    "sync:meta": "tsx scripts/sync-version.ts",
+    "version:sync": "pnpm run sync:meta",
+    "dev": "pnpm run sync:meta && tauri dev",
+    "dev:frontend": "vite",
+    "clean:bundle": "tsx scripts/clean-bundle-artifacts.ts",
+    "build": "pnpm run sync:meta && tauri build && pnpm run clean:bundle",
+    "build:frontend": "vite build",
+    "build:mac": "pnpm run build",
+    "build:mac:arm64": "pnpm run sync:meta && tauri build --target aarch64-apple-darwin && pnpm run clean:bundle",
+    "build:mac:x64": "pnpm run sync:meta && tauri build --target x86_64-apple-darwin && pnpm run clean:bundle",
+    "build:mac:universal": "pnpm run sync:meta && tauri build --target universal-apple-darwin && pnpm run clean:bundle",
+    "build:mac:all": "pnpm run build:mac:arm64 && pnpm run build:mac:x64",
     "icons": "tsx scripts/generate-icons.ts",
     "lint": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
     "typecheck": "npm run lint",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "postinstall": "electron-builder install-app-deps"
+    "tauri": "tauri"
   },
   "repository": {
     "type": "git",
@@ -36,51 +38,15 @@
     "sshfs",
     "gui",
     "macos",
-    "electron"
+    "tauri"
   ],
-  "build": {
-    "appId": "com.tommasomeli.sshfsgui",
-    "productName": "SSHFS GUI",
-    "compression": "maximum",
-    "directories": {
-      "output": "release/${version}"
-    },
-    "files": [
-      "out/**/*",
-      "package.json"
-    ],
-    "afterPack": "scripts/after-pack.js",
-    "afterSign": "scripts/notarize.js",
-    "mac": {
-      "category": "public.app-category.utilities",
-      "icon": "resources/build/icon.icns",
-      "hardenedRuntime": true,
-      "entitlements": "entitlements.mac.plist",
-      "entitlementsInherit": "entitlements.mac.plist",
-      "gatekeeperAssess": false,
-      "target": [
-        "dmg",
-        "zip"
-      ],
-      "extendInfo": {
-        "CFBundleAllowMixedLocalizations": true
-      },
-      "electronLanguages": [
-        "en",
-        "it"
-      ]
-    }
-  },
   "devDependencies": {
-    "@electron/notarize": "^3.1.1",
     "@tailwindcss/vite": "^4.2.4",
+    "@tauri-apps/cli": "^2.11.4",
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.2.0",
-    "electron": "^41.3.0",
-    "electron-builder": "^26.8.1",
-    "electron-vite": "^5.0.0",
     "tailwindcss": "^4.2.4",
     "tsx": "^4.21.0",
     "tw-animate-css": "^1.4.0",
@@ -97,10 +63,10 @@
     "@radix-ui/react-switch": "^1.2.6",
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@tauri-apps/api": "^2.11.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "i18next": "^26.0.8",
-    "keytar": "^7.9.0",
     "lucide-react": "^1.11.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",

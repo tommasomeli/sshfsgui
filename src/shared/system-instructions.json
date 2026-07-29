@@ -1,0 +1,23 @@
+{
+  "stacks": [
+    {
+      "key": "fuseT",
+      "commands": [
+        "brew tap macos-fuse-t/homebrew-cask",
+        "brew install --cask fuse-t fuse-t-sshfs"
+      ]
+    },
+    {
+      "key": "macfuse",
+      "commands": [
+        "brew install --cask macfuse",
+        "brew install gromgit/fuse/sshfs-mac"
+      ]
+    }
+  ],
+  "links": [
+    { "label": "FUSE-T", "url": "https://github.com/macos-fuse-t/fuse-t" },
+    { "label": "macFUSE", "url": "https://macfuse.io/" },
+    { "label": "Homebrew", "url": "https://brew.sh" }
+  ]
+}

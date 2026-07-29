@@ -18,16 +18,14 @@
     "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/renderer/src/*"],
+      "@/*": ["src/*"],
       "@shared/*": ["src/shared/*"]
     }
   },
   "include": [
-    "src/renderer/**/*.ts",
-    "src/renderer/**/*.tsx",
-    "src/shared/**/*.ts",
-    "src/shared/**/*.json",
-    "src/renderer/**/*.json"
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.json"
   ],
   "exclude": [
     "src/shared/paths.ts",

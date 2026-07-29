@@ -44,18 +44,6 @@ export interface InstallInstructions {
   links: { label: string; url: string }[];
 }
 
-export type IpcChannel =
-  | 'system:check'
-  | 'system:install-instructions'
-  | 'servers:list'
-  | 'servers:save'
-  | 'servers:delete'
-  | 'servers:mount'
-  | 'servers:unmount'
-  | 'servers:status'
-  | 'servers:reveal'
-  | 'shell:open-external';
-
 export interface AppSettings {
   launchAtLogin: boolean;
   unmountOnQuit: boolean;
