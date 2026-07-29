@@ -11,7 +11,7 @@
 - [ ] Tests added or updated for user-visible behaviour
 - [ ] CHANGELOG entry under `## [Unreleased]`
 - [ ] README updated (only if install steps, features, or usage changed)
-- [ ] `pnpm run lint`, `pnpm test`, and `pnpm run build` pass locally
+- [ ] `pnpm run lint`, `pnpm test`, and `pnpm run build:frontend` pass locally
 
 ## Test plan
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getInstallInstructions } from '../src/main/system';
+import { getInstallInstructions } from '../src/shared/system-instructions';
 
 describe('getInstallInstructions', () => {
   it('documents both Homebrew install stacks', () => {
