@@ -55,6 +55,11 @@ jobs:
         with:
           version: 10
       - uses: actions/setup-node@v6
+        if: ${{ hashFiles('pnpm-lock.yaml') == '' }}
+        with:
+          node-version: '22'
+      - uses: actions/setup-node@v6
+        if: ${{ hashFiles('pnpm-lock.yaml') != '' }}
         with:
           node-version: '22'
           cache: pnpm
