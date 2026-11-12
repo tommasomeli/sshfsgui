@@ -1,4 +1,5 @@
 mod app_info;
+mod bundled;
 mod commands;
 mod import_export;
 mod locale;

@@ -1,0 +1,8 @@
+{
+  "bundle": {
+    "externalBin": ["binaries/sshfs", "binaries/go-nfsv4"],
+    "macOS": {
+      "frameworks": ["frameworks/libfuse3.4.dylib"]
+    }
+  }
+}
