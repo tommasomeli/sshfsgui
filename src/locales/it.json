@@ -95,20 +95,6 @@
     "importConfirm": "I dati importati verranno uniti alla configurazione attuale. Continuare?",
     "noDataSelected": "Seleziona almeno un tipo di dati"
   },
-  "system": {
-    "ready": "Sistema pronto",
-    "recheck": "Ricontrolla",
-    "missing": "Requisiti di sistema mancanti",
-    "installed": "installato",
-    "notInstalled": "mancante",
-    "homebrewIntro": "Installa con Homebrew:",
-    "copyCommands": "Copia comandi",
-    "copied": "Copiato!",
-    "stack": {
-      "fuseT": "Opzione A - FUSE-T + SSHFS (senza estensione kernel)",
-      "macfuse": "Opzione B - macFUSE + SSHFS (estensione kernel)"
-    }
-  },
   "menu": {
     "about": "Informazioni su {{name}}",
     "settings": "Impostazioni…",

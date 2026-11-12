@@ -10,34 +10,38 @@ use crate::sshfs_args::build_sshfs_args;
 use crate::storage;
 use crate::types::{AuthMethod, ServerConfig};
 
-static SSHFS_PATH: OnceCell<String> = OnceCell::const_new();
-
-async fn resolve_sshfs_path() -> Result<String, String> {
-    let shell = std::env::var("SHELL").unwrap_or_else(|_| "/bin/zsh".to_string());
-    let output = Command::new(&shell)
-        .arg("-lc")
-        .arg("which sshfs")
-        .output()
-        .await
-        .map_err(|e| e.to_string())?;
-    let path = String::from_utf8_lossy(&output.stdout).trim().to_string();
-    if output.status.success() && !path.is_empty() {
-        Ok(path)
-    } else {
-        Err("sshfs not found. Install it via Homebrew or add it to your PATH.".to_string())
-    }
-}
-
+/// The sshfs shipped inside the app. Development builds run from `target/` without it and use
+/// the `sshfs` on the developer's login-shell PATH.
 async fn get_sshfs_path() -> Result<String, String> {
     if let Some(bundled) = bundled_sshfs() {
         return Ok(bundled.sshfs.to_string_lossy().into_owned());
     }
-    if let Some(p) = SSHFS_PATH.get() {
-        return Ok(p.clone());
+    if cfg!(debug_assertions) {
+        return development_sshfs_path().await;
     }
-    let path = resolve_sshfs_path().await?;
-    let _ = SSHFS_PATH.set(path.clone());
-    Ok(path)
+    Err("sshfs is missing from the app. Reinstall SSHFS GUI.".to_string())
+}
+
+async fn development_sshfs_path() -> Result<String, String> {
+    static SSHFS_PATH: OnceCell<String> = OnceCell::const_new();
+    SSHFS_PATH
+        .get_or_try_init(|| async {
+            let shell = std::env::var("SHELL").unwrap_or_else(|_| "/bin/zsh".to_string());
+            let output = Command::new(&shell)
+                .arg("-lc")
+                .arg("command -v sshfs")
+                .output()
+                .await
+                .map_err(|e| e.to_string())?;
+            let path = String::from_utf8_lossy(&output.stdout).trim().to_string();
+            if output.status.success() && !path.is_empty() {
+                Ok(path)
+            } else {
+                Err("Development builds use the sshfs on your PATH, and none was found.".to_string())
+            }
+        })
+        .await
+        .cloned()
 }
 
 pub async fn is_mounted(local_path: &str) -> bool {

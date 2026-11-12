@@ -12,7 +12,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Sidebar, type Filter } from '@/components/Sidebar';
 import { ServerList } from '@/components/ServerList';
 import { ServerDetail } from '@/components/ServerDetail';
-import { SystemRequirementsBanner } from '@/components/SystemRequirementsBanner';
 import { ServerFormDialog } from '@/components/ServerFormDialog';
 import { SettingsDialog } from '@/components/SettingsDialog';
 import { ImportExportDialog } from '@/components/ImportExportDialog';
@@ -273,8 +272,6 @@ export function App() {
               <Plus strokeWidth={1.75} />
             </Button>
           </header>
-
-          <SystemRequirementsBanner />
 
           {updateInfo && (
             <div className="flex items-center gap-2 border-b bg-primary/8 px-3 py-1.5 text-[12px]">

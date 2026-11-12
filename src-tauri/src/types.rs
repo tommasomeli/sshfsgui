@@ -62,44 +62,6 @@ pub struct ServerInput {
     pub password: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize)]
-pub struct SshfsStatus {
-    pub installed: bool,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub version: Option<String>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-pub struct FuseStatus {
-    pub installed: bool,
-}
-
-#[derive(Debug, Clone, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct SystemStatus {
-    pub sshfs: SshfsStatus,
-    pub fuse_t: FuseStatus,
-    pub macfuse: FuseStatus,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct HomebrewStackInstruction {
-    pub key: String,
-    pub commands: Vec<String>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct InstallLink {
-    pub label: String,
-    pub url: String,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct InstallInstructions {
-    pub stacks: Vec<HomebrewStackInstruction>,
-    pub links: Vec<InstallLink>,
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum Language {

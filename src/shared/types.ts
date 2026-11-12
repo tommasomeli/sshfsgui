@@ -26,24 +26,6 @@ export type ServerInput = Omit<ServerConfig, 'id' | 'createdAt' | 'updatedAt'> &
   password?: string;
 };
 
-export interface SystemStatus {
-  sshfs: { installed: boolean; version?: string };
-  fuseT: { installed: boolean };
-  macfuse: { installed: boolean };
-}
-
-export type HomebrewStackKey = 'fuseT' | 'macfuse';
-
-export interface HomebrewStackInstruction {
-  key: HomebrewStackKey;
-  commands: string[];
-}
-
-export interface InstallInstructions {
-  stacks: HomebrewStackInstruction[];
-  links: { label: string; url: string }[];
-}
-
 export interface AppSettings {
   launchAtLogin: boolean;
   unmountOnQuit: boolean;
@@ -52,10 +34,6 @@ export interface AppSettings {
 }
 
 export interface SshfsApi {
-  checkSystem(): Promise<SystemStatus>;
-  installInstructions(): Promise<InstallInstructions>;
-  wasSystemReadySeen(): Promise<boolean>;
-  markSystemReadySeen(): Promise<void>;
   listServers(): Promise<ServerWithStatus[]>;
   saveServer(input: ServerInput): Promise<ServerWithStatus>;
   deleteServer(id: string): Promise<void>;

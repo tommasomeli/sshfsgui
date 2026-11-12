@@ -1,16 +1,14 @@
 import { create } from 'zustand';
 import i18n from 'i18next';
 import { applyLanguage } from '@/i18n';
-import type { AppSettings, ServerInput, ServerWithStatus, SystemStatus } from '@shared/types';
+import type { AppSettings, ServerInput, ServerWithStatus } from '@shared/types';
 
 interface ServersState {
   servers: ServerWithStatus[];
-  system: SystemStatus | null;
   settings: AppSettings;
   loading: boolean;
   initialized: boolean;
   init(): Promise<void>;
-  refreshSystem(): Promise<void>;
   refresh(): Promise<void>;
   refreshStatuses(): Promise<void>;
   save(input: ServerInput): Promise<ServerWithStatus>;
@@ -24,7 +22,6 @@ interface ServersState {
 
 export const useServersStore = create<ServersState>((set, get) => ({
   servers: [],
-  system: null,
   settings: { launchAtLogin: false, unmountOnQuit: false, showInTray: false, language: 'auto' },
   loading: false,
   initialized: false,
@@ -32,18 +29,12 @@ export const useServersStore = create<ServersState>((set, get) => ({
   async init() {
     if (get().initialized) return;
     set({ loading: true });
-    const [system, servers, settings] = await Promise.all([
-      window.sshfs.checkSystem(),
+    const [servers, settings] = await Promise.all([
       window.sshfs.listServers(),
       window.sshfs.getSettings(),
     ]);
     applyLanguage(settings.language);
-    set({ system, servers, settings, loading: false, initialized: true });
-  },
-
-  async refreshSystem() {
-    const system = await window.sshfs.checkSystem();
-    set({ system });
+    set({ servers, settings, loading: false, initialized: true });
   },
 
   async refresh() {

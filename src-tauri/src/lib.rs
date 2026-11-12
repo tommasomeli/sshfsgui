@@ -9,7 +9,6 @@ mod paths;
 mod sshfs_args;
 mod state;
 mod storage;
-mod system;
 mod tray;
 mod types;
 mod updater;
@@ -58,10 +57,6 @@ pub fn run() {
         ))
         .manage(Mutex::new(AppState::default()) as SharedState)
         .invoke_handler(tauri::generate_handler![
-            commands::system::system_check,
-            commands::system::system_install_instructions,
-            commands::system::system_ready_seen,
-            commands::system::system_mark_ready_seen,
             commands::servers::servers_list,
             commands::servers::servers_save,
             commands::servers::servers_delete,

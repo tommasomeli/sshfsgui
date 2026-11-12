@@ -108,7 +108,6 @@ Releases are published from GitHub on a push to `main`, or from a Mac with `pnpm
 
 Shared metadata lives in `src/shared/`:
 - `app-info.json` - product name, app id, slug, developer, GitHub URL, description, export format version
-- `system-instructions.json` - Homebrew install guidance
 - `sshfs-defaults.json` - default `sshfs` `-o` flags
 - `src/locales/*.json` - UI and native menu strings
 

@@ -7,7 +7,7 @@ body:
     attributes:
       value: |
         Thanks for taking the time to fill out this bug report.
-        Include your macOS version, FUSE stack (FUSE-T or macFUSE), and the steps to reproduce.
+        Include your app and macOS versions and the steps to reproduce.
   - type: textarea
     id: description
     attributes:
@@ -33,7 +33,7 @@ body:
     attributes:
       label: App version
       description: SSHFS GUI → About, or the release tag you installed.
-      placeholder: e.g. 1.0.0
+      placeholder: e.g. 1.2.0
     validations:
       required: true
   - type: input
@@ -41,16 +41,6 @@ body:
     attributes:
       label: macOS version
       placeholder: e.g. 15.4
-    validations:
-      required: true
-  - type: dropdown
-    id: fuse_stack
-    attributes:
-      label: FUSE stack
-      options:
-        - FUSE-T
-        - macFUSE
-        - Unknown / not installed yet
     validations:
       required: true
   - type: textarea

@@ -5,10 +5,6 @@ import type { SshfsApi } from '@shared/types';
 /** Builds the `window.sshfs` implementation backed by Tauri commands and events. */
 export function createSshfsApi(): SshfsApi {
   const api: SshfsApi = {
-    checkSystem: () => invoke('system_check'),
-    installInstructions: () => invoke('system_install_instructions'),
-    wasSystemReadySeen: () => invoke('system_ready_seen'),
-    markSystemReadySeen: () => invoke('system_mark_ready_seen'),
     listServers: () => invoke('servers_list'),
     saveServer: (input) => invoke('servers_save', { input }),
     deleteServer: (id) => invoke('servers_delete', { id }),

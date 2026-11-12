@@ -52,7 +52,7 @@ CI runs lint, tests (Node 20/22), frontend build, `cargo check` on `src-tauri/`,
 Use the [Bug Report template](https://github.com/tommasomeli/sshfsgui/issues/new?template=bug_report.yml) and include:
 
 - Steps to reproduce, plus expected vs actual behaviour
-- App version, macOS version, and FUSE stack (FUSE-T or macFUSE)
+- App version and macOS version
 - Relevant `sshfs` or app error output
 
 For security issues, see [SECURITY.md](./SECURITY.md). Do not open a public issue.
