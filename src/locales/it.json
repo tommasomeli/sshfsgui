@@ -6,11 +6,6 @@
     "noServers": "Nessun server configurato.",
     "noMatch": "Nessun server corrisponde ai filtri."
   },
-  "tabs": {
-    "all": "Tutti ({{count}})",
-    "favorites": "Preferiti ({{count}})",
-    "mounted": "Montati ({{count}})"
-  },
   "server": {
     "mount": "Monta",
     "unmount": "Smonta",
@@ -27,10 +22,9 @@
     "clonedMultiple": "{{count}} server clonati",
     "deletedMultiple": "{{count}} server eliminati",
     "deleteMultipleConfirm": "Eliminare {{count}} server selezionati? Quelli attivi verranno smontati.",
+    "deleteAllConfirm": "Eliminare tutti i {{count}} server? Quelli attivi verranno smontati.",
     "selectAll": "Seleziona tutti",
-    "deselectAll": "Deseleziona tutti",
-    "deleteAll": "Elimina tutti",
-    "deleteAllConfirm": "Eliminare tutti i {{count}} server? Quelli attivi verranno smontati."
+    "deselectAll": "Deseleziona tutti"
   },
   "tooltip": {
     "refresh": "Aggiorna",
@@ -155,5 +149,17 @@
     "download": "Scarica",
     "upToDate": "Sei aggiornato!",
     "checkFailed": "Impossibile verificare gli aggiornamenti. Riprova più tardi."
+  },
+  "sidebar": {
+    "title": "Server",
+    "all": "Tutti i server",
+    "favorites": "Preferiti",
+    "mounted": "Montati"
+  },
+  "detail": {
+    "mounted": "Montato",
+    "notMounted": "Non montato",
+    "count_one": "{{count}} server",
+    "count_other": "{{count}} server"
   }
 }

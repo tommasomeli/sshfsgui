@@ -108,7 +108,7 @@ pub fn run() {
                 _ => {}
             });
 
-            if settings.launch_at_login {
+            if settings.launch_at_login && is_packaged() {
                 let _ = handle.autolaunch().enable();
             }
 

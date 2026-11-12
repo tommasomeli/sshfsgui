@@ -23,6 +23,8 @@
     "build:mac:universal": "pnpm run sync:meta && tauri build --target universal-apple-darwin && pnpm run clean:bundle",
     "build:mac:all": "pnpm run build:mac:arm64 && pnpm run build:mac:x64",
     "icons": "tsx scripts/generate-icons.ts",
+    "demo:seed": "tsx scripts/demo-data.ts seed",
+    "demo:restore": "tsx scripts/demo-data.ts restore",
     "lint": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
     "typecheck": "npm run lint",
     "test": "vitest run",
