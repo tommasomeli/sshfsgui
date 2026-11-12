@@ -68,7 +68,7 @@ Maintainer-only. Every release starts the same way:
 
 Requires the GitHub Actions secrets `CERTIFICATE_P12_BASE64`, `CERTIFICATE_PASSWORD`, `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD` and `APPLE_TEAM_ID`.
 
-Push to `main`. The [`release.yml`](./.github/workflows/release.yml) workflow publishes the version when it has no release yet: it builds the two DMGs in parallel, then creates the release. Pushes that keep the same `version` are skipped.
+Push to `main`. The [`release.yml`](./.github/workflows/release.yml) workflow publishes the version when it has no release yet: it builds the two DMGs on one machine, then creates the release. Pushes that keep the same `version` are skipped.
 
 ### From your Mac
 
