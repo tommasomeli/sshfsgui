@@ -41,7 +41,7 @@
 
 ## Requirements
 
-macOS 11 or later. SSHFS GUI ships with everything it needs to mount: `sshfs` and [FUSE-T](https://www.fuse-t.org), which works without kernel extensions. Nothing else to install, and it runs alongside any sshfs, macFUSE or FUSE-T already on your Mac.
+macOS 12 or later. SSHFS GUI ships with everything it needs to mount: `sshfs` and [FUSE-T](https://www.fuse-t.org), which works without kernel extensions. Nothing else to install, and it runs alongside any sshfs, macFUSE or FUSE-T already on your Mac.
 
 ## Installation
 

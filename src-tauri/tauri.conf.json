@@ -53,6 +53,9 @@
       "icons/icon.ico"
     ],
     "category": "Utility",
-    "shortDescription": "A simple SSHFS GUI for macOS"
+    "shortDescription": "A simple SSHFS GUI for macOS",
+    "macOS": {
+      "minimumSystemVersion": "12.0"
+    }
   }
 }

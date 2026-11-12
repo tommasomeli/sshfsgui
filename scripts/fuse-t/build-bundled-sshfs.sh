@@ -6,7 +6,7 @@
 #   src-tauri/third-party/*                -> Contents/Resources/third-party/   (licenses and sources)
 #
 # sshfs links libfuse3 through @rpath (@executable_path/../Frameworks) and a static glib
-# built here from source for macOS 11, so the app depends only on its own files and on
+# built here from source for macOS 12, so the app depends only on its own files and on
 # system libraries.
 #
 # Usage: scripts/fuse-t/build-bundled-sshfs.sh [arm64|x86_64|universal]
@@ -14,7 +14,7 @@
 set -euo pipefail
 
 TARGET="${1:-$(uname -m)}"
-MACOS_MIN=11.0
+MACOS_MIN=12.0
 
 FUSE_T_VERSION=1.2.9
 FUSE_T_SHA256=a1b893740ded8ea034f1acc522ded1144f4a567a1f416daef8c1441cf2662f7f
@@ -64,13 +64,40 @@ tar xJf "$WORK/glib.tar.xz" -C "$WORK/glib" --strip-components 1
 build_glib() { # arch -> prints install prefix
   local arch=$1 prefix="$WORK/glib-$1"
   if [[ ! -f "$prefix/lib/libglib-2.0.a" ]]; then
+    local cpu=$arch cross="$WORK/cross-$arch.ini"
+    [[ "$arch" == arm64 ]] && cpu=aarch64
+    # A cross file pins the target CPU, so meson configures the requested arch on any host.
+    cat > "$cross" <<EOF
+[binaries]
+c = ['clang', '-arch', '$arch']
+cpp = ['clang++', '-arch', '$arch']
+objc = ['clang', '-arch', '$arch']
+ar = 'ar'
+strip = 'strip'
+pkg-config = 'pkg-config'
+
+[built-in options]
+c_args = ['-mmacosx-version-min=$MACOS_MIN']
+c_link_args = ['-mmacosx-version-min=$MACOS_MIN']
+objc_args = ['-mmacosx-version-min=$MACOS_MIN']
+objc_link_args = ['-mmacosx-version-min=$MACOS_MIN']
+
+[properties]
+needs_exe_wrapper = false
+
+[host_machine]
+system = 'darwin'
+subsystem = 'macos'
+kernel = 'xnu'
+cpu_family = '$cpu'
+cpu = '$cpu'
+endian = 'little'
+EOF
     mkdir -p "$WORK/empty-pkgconfig"
     rm -rf "$WORK/glib-build-$arch"
     (cd "$WORK/glib" &&
       PKG_CONFIG_LIBDIR="$WORK/empty-pkgconfig" \
-      CC="clang -arch $arch" CXX="clang++ -arch $arch" \
-      CFLAGS="-mmacosx-version-min=$MACOS_MIN" LDFLAGS="-mmacosx-version-min=$MACOS_MIN" \
-      meson setup "$WORK/glib-build-$arch" --prefix="$prefix" --libdir=lib \
+      meson setup "$WORK/glib-build-$arch" --cross-file "$cross" --prefix="$prefix" --libdir=lib \
         --default-library=static --buildtype=minsize \
         --force-fallback-for=pcre2,libffi,proxy-libintl \
         -Dtests=false -Dintrospection=disabled -Dnls=disabled -Dman-pages=disabled \
@@ -91,14 +118,16 @@ build_arch() { # arch
   printf '#define PACKAGE_VERSION "%s"\n#define IDMAP_DEFAULT "user"\n' "$SSHFS_VERSION" > "$B/config.h"
   lipo "$FT/lib/libfuse3.4.dylib" -thin "$arch" -output "$B/libfuse3.4.dylib"
 
+  local glib_pc
   local -a glib_flags
-  read -r -a glib_flags <<< "$(PKG_CONFIG_LIBDIR="$glib/lib/pkgconfig" pkg-config --static --cflags --libs glib-2.0)"
+  glib_pc="$(PKG_CONFIG_LIBDIR="$glib/lib/pkgconfig" pkg-config --static --cflags --libs glib-2.0)"
+  read -r -a glib_flags <<< "$glib_pc"
 
   (cd "$WORK/sshfs" && clang -arch "$arch" -mmacosx-version-min="$MACOS_MIN" -Os \
     -D_REENTRANT -DHAVE_CONFIG_H -DFUSE_DARWIN_ENABLE_EXTENSIONS=0 -DFUSE_USE_VERSION=31 \
     -I"$B" -I. -Icompat -I"$FT/include/fuse3" \
     sshfs.c cache.c compat/darwin_compat.c -o "$B/sshfs" \
-    -L"$B" -lfuse3 "${glib_flags[@]}" -liconv \
+    "$B/libfuse3.4.dylib" "${glib_flags[@]}" \
     -framework CoreFoundation -framework Foundation -framework AppKit \
     -Wl,-rpath,@executable_path/../Frameworks -Wl,-dead_strip)
   strip -x "$B/sshfs"
