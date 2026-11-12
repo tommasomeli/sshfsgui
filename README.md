@@ -104,6 +104,8 @@ Release builds run [`scripts/fuse-t/build-bundled-sshfs.sh`](scripts/fuse-t/buil
 
 `pnpm demo:seed` swaps your servers for a demo set (for screenshots) and `pnpm demo:restore` puts yours back. Quit the app before running either.
 
+Releases are published from GitHub on a push to `main`, or from a Mac with `pnpm release:local`: see [Releases](CONTRIBUTING.md#releases).
+
 Shared metadata lives in `src/shared/`:
 - `app-info.json` - product name, app id, slug, developer, GitHub URL, description, export format version
 - `system-instructions.json` - Homebrew install guidance

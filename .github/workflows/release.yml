@@ -24,29 +24,34 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Current version: $VERSION"
 
-      - name: Compare with latest GitHub release
+      # A release published from a Mac with `pnpm release:local` already carries this tag.
+      - name: Compare with published releases
         id: compare
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          CURRENT=${{ steps.read.outputs.version }}
-          LATEST=$(gh release list --limit 1 --json tagName --jq '.[0].tagName // empty' 2>/dev/null || true)
-          LATEST=${LATEST#v}
-          echo "Current: $CURRENT | Latest release: ${LATEST:-none}"
-          if [ "$CURRENT" = "$LATEST" ]; then
-            echo "Version unchanged, skipping."
+          VERSION=${{ steps.read.outputs.version }}
+          if gh release view "v$VERSION" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "v$VERSION is already published, skipping."
             echo "should_release=false" >> "$GITHUB_OUTPUT"
           else
             echo "New version detected."
             echo "should_release=true" >> "$GITHUB_OUTPUT"
           fi
 
-  build-and-release:
+  build:
     needs: check-version
     if: needs.check-version.outputs.should_release == 'true'
     runs-on: macos-latest
-    permissions:
-      contents: write
+    strategy:
+      matrix:
+        include:
+          - arch: arm64
+            target: aarch64-apple-darwin
+            script: build:mac:arm64
+          - arch: x86_64
+            target: x86_64-apple-darwin
+            script: build:mac:x64
     steps:
       - uses: actions/checkout@v6
 
@@ -67,10 +72,11 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
         with:
-          targets: aarch64-apple-darwin,x86_64-apple-darwin
+          targets: ${{ matrix.target }}
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: src-tauri
+          key: ${{ matrix.target }}
 
       # Same secrets as before (CERTIFICATE_P12_BASE64, CERTIFICATE_PASSWORD)
       # mapped to the env vars Tauri's CLI expects for macOS signing.
@@ -98,7 +104,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .cache/fuse-t
-          key: fuse-t-${{ runner.os }}-${{ hashFiles('scripts/fuse-t/build-bundled-sshfs.sh') }}
+          key: fuse-t-${{ runner.os }}-${{ matrix.arch }}-${{ hashFiles('scripts/fuse-t/build-bundled-sshfs.sh') }}
 
       - name: Install dependencies
         run: |
@@ -109,18 +115,41 @@ jobs:
           fi
 
       - name: Lint and test
+        if: matrix.arch == 'arm64'
         run: |
           pnpm run lint
           pnpm test
 
-      - name: Build macOS DMGs (arm64 + x64)
+      - name: Build macOS DMG (${{ matrix.arch }})
         env:
-          APPLE_CERTIFICATE: ${{ secrets.CERTIFICATE_P12_BASE64 }}
-          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.CERTIFICATE_PASSWORD }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-        run: pnpm run build:mac:all
+        run: pnpm run ${{ matrix.script }}
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: dmg-${{ matrix.arch }}
+          path: src-tauri/target/${{ matrix.target }}/release/bundle/dmg/*.dmg
+          if-no-files-found: error
+
+      - name: Clean up keychain
+        if: always()
+        run: security delete-keychain $RUNNER_TEMP/build.keychain || true
+
+  publish:
+    needs: [check-version, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/download-artifact@v7
+        with:
+          pattern: dmg-*
+          path: dmg
+          merge-multiple: true
 
       - name: Extract changelog for this version
         id: changelog
@@ -139,11 +168,7 @@ jobs:
         run: |
           VERSION=${{ needs.check-version.outputs.version }}
           gh release create "v$VERSION" \
+            --target "$GITHUB_SHA" \
             --title "v$VERSION" \
             --notes "${{ steps.changelog.outputs.body }}" \
-            src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg \
-            src-tauri/target/x86_64-apple-darwin/release/bundle/dmg/*.dmg
-
-      - name: Clean up keychain
-        if: always()
-        run: security delete-keychain $RUNNER_TEMP/build.keychain || true
+            dmg/*.dmg

@@ -59,10 +59,21 @@ For security issues, see [SECURITY.md](./SECURITY.md). Do not open a public issu
 
 ## Releases
 
-Maintainer-only:
+Maintainer-only. Every release starts the same way:
 
-1. Configure GitHub Actions secrets for Apple code signing and notarization (`CERTIFICATE_P12_BASE64`, `CERTIFICATE_PASSWORD`, `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, `APPLE_TEAM_ID`).
-2. Bump `version` in `package.json` only. For product identity / install docs / sshfs defaults, edit files under `src/shared/` (and locales under `src/locales/`). Run `pnpm run sync:meta`, then add a dated section in `CHANGELOG.md`.
-3. Push to `main`. The [`release.yml`](./.github/workflows/release.yml) workflow compares the version with the latest GitHub release and, when new, runs `tauri build`, produces signed macOS DMGs, and publishes the release.
+1. Bump `version` in `package.json` only. For product identity / install docs / sshfs defaults, edit files under `src/shared/` (and locales under `src/locales/`). Run `pnpm run sync:meta`, then add a dated section in `CHANGELOG.md`.
+2. Publish it from GitHub or from your Mac, as described below. Either way the release gets signed and notarized DMGs for arm64 and x64 with the changelog section as notes.
 
-Pushes that do not bump `version` are skipped automatically.
+### From GitHub
+
+Requires the GitHub Actions secrets `CERTIFICATE_P12_BASE64`, `CERTIFICATE_PASSWORD`, `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD` and `APPLE_TEAM_ID`.
+
+Push to `main`. The [`release.yml`](./.github/workflows/release.yml) workflow publishes the version when it has no release yet: it builds the two DMGs in parallel, then creates the release. Pushes that keep the same `version` are skipped.
+
+### From your Mac
+
+Requires a `Developer ID Application` identity in the login keychain, plus `meson` and `ninja` (`brew install meson ninja`).
+
+1. Commit the version bump on `main`.
+2. Run `pnpm release:local`. The first run asks for the Apple ID and an app-specific password and saves them in the keychain as `apple-notary`; later runs read them from there. The script builds, signs, notarizes and checks both DMGs, shows the notes and asks before publishing.
+3. Push `main`. The workflow finds the published release and skips its own build.

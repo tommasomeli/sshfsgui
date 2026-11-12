@@ -31,7 +31,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "tauri": "tauri",
-    "sshfs:bundle": "scripts/fuse-t/build-bundled-sshfs.sh"
+    "sshfs:bundle": "scripts/fuse-t/build-bundled-sshfs.sh",
+    "release:local": "scripts/release-local.sh"
   },
   "repository": {
     "type": "git",
