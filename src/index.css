@@ -4,48 +4,64 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --radius: 0.5rem;
+  --window: transparent;
+  --background: rgb(255 255 255);
+  --foreground: rgb(0 0 0 / 85%);
+  --card: rgb(255 255 255);
+  --card-foreground: rgb(0 0 0 / 85%);
+  --popover: rgb(246 246 246);
+  --popover-foreground: rgb(0 0 0 / 85%);
+  --primary: #007aff;
+  --primary-foreground: #ffffff;
+  --secondary: rgb(0 0 0 / 5%);
+  --secondary-foreground: rgb(0 0 0 / 85%);
+  --muted: rgb(0 0 0 / 4%);
+  --muted-foreground: rgb(0 0 0 / 50%);
+  --accent: rgb(0 0 0 / 6%);
+  --accent-foreground: rgb(0 0 0 / 85%);
+  --destructive: #ff3b30;
+  --destructive-foreground: #ffffff;
+  --success: #28cd41;
+  --warning: #ff9500;
+  --border: rgb(0 0 0 / 10%);
+  --input: rgb(0 0 0 / 12%);
+  --ring: color-mix(in srgb, var(--primary) 50%, transparent);
+  --sidebar-foreground: rgb(0 0 0 / 85%);
+  --sidebar-muted: rgb(0 0 0 / 45%);
+  --sidebar-active: rgb(0 0 0 / 8%);
+  color-scheme: light;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --background: rgb(30 30 30);
+  --foreground: rgb(255 255 255 / 88%);
+  --card: rgb(40 40 40);
+  --card-foreground: rgb(255 255 255 / 88%);
+  --popover: rgb(40 40 40);
+  --popover-foreground: rgb(255 255 255 / 88%);
+  --primary: #0a84ff;
+  --secondary: rgb(255 255 255 / 8%);
+  --secondary-foreground: rgb(255 255 255 / 88%);
+  --muted: rgb(255 255 255 / 5%);
+  --muted-foreground: rgb(255 255 255 / 50%);
+  --accent: rgb(255 255 255 / 8%);
+  --accent-foreground: rgb(255 255 255 / 88%);
+  --destructive: #ff453a;
+  --success: #32d74b;
+  --warning: #ff9f0a;
+  --border: rgb(255 255 255 / 10%);
+  --input: rgb(255 255 255 / 12%);
+  --sidebar-foreground: rgb(255 255 255 / 85%);
+  --sidebar-muted: rgb(255 255 255 / 45%);
+  --sidebar-active: rgb(255 255 255 / 10%);
+  color-scheme: dark;
+}
+
+@supports (color: -apple-system-control-accent) {
+  :root, .dark {
+    --primary: -apple-system-control-accent;
+  }
 }
 
 @theme inline {
@@ -68,6 +84,11 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-muted: var(--sidebar-muted);
+  --color-sidebar-active: var(--sidebar-active);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -81,31 +102,32 @@
   html, body, #root {
     height: 100%;
     overflow: hidden;
+    background: transparent;
   }
   body {
+    @apply bg-transparent text-foreground;
+    font-size: 13px;
+    cursor: default;
     -webkit-font-smoothing: antialiased;
     -webkit-user-select: none;
     user-select: none;
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+  }
+  body.resizing,
+  body.resizing * {
+    cursor: col-resize !important;
+    transition: none !important;
+  }
+  body.marquee [role="listbox"] * {
+    pointer-events: none;
+  }
+  body.resizing [role="listbox"],
+  body.resizing aside {
+    pointer-events: none;
   }
   input, textarea {
     -webkit-user-select: text;
     user-select: text;
-  }
-  button:not(:disabled),
-  [role="button"]:not([aria-disabled="true"]),
-  [role="checkbox"]:not([aria-disabled="true"]),
-  [role="switch"]:not([aria-disabled="true"]),
-  [role="tab"]:not([aria-disabled="true"]),
-  [role="menuitem"]:not([aria-disabled="true"]),
-  [role="option"]:not([aria-disabled="true"]),
-  label[for],
-  select:not(:disabled),
-  summary,
-  input[type="checkbox"]:not(:disabled),
-  input[type="radio"]:not(:disabled),
-  input[type="file"]:not(:disabled) {
-    cursor: pointer;
   }
 }
 

@@ -5,3 +5,9 @@ dist
 *.log
 .vite
 src-tauri/target
+
+# Bundled sshfs (scripts/fuse-t/build-bundled-sshfs.sh)
+/src-tauri/binaries/
+/src-tauri/frameworks/
+/src-tauri/third-party/
+/.cache/

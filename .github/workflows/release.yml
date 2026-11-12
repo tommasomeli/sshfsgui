@@ -24,17 +24,15 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Current version: $VERSION"
 
-      - name: Compare with latest GitHub release
+      # A release published from a Mac with `pnpm release:local` already carries this tag.
+      - name: Compare with published releases
         id: compare
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          CURRENT=${{ steps.read.outputs.version }}
-          LATEST=$(gh release list --limit 1 --json tagName --jq '.[0].tagName // empty' 2>/dev/null || true)
-          LATEST=${LATEST#v}
-          echo "Current: $CURRENT | Latest release: ${LATEST:-none}"
-          if [ "$CURRENT" = "$LATEST" ]; then
-            echo "Version unchanged, skipping."
+          VERSION=${{ steps.read.outputs.version }}
+          if gh release view "v$VERSION" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "v$VERSION is already published, skipping."
             echo "should_release=false" >> "$GITHUB_OUTPUT"
           else
             echo "New version detected."
@@ -91,6 +89,15 @@ jobs:
           IDENTITY=$(security find-identity -v -p codesigning "$KEYCHAIN_PATH" | head -1 | grep -o '"[^"]*"' | tr -d '"')
           echo "APPLE_SIGNING_IDENTITY=$IDENTITY" >> "$GITHUB_ENV"
 
+      - name: Install sshfs build tools
+        run: brew install meson ninja
+
+      - name: Cache bundled sshfs sources and static glib
+        uses: actions/cache@v4
+        with:
+          path: .cache/fuse-t
+          key: fuse-t-${{ runner.os }}-${{ hashFiles('scripts/fuse-t/build-bundled-sshfs.sh') }}
+
       - name: Install dependencies
         run: |
           if [ -f pnpm-lock.yaml ]; then
@@ -130,6 +137,7 @@ jobs:
         run: |
           VERSION=${{ needs.check-version.outputs.version }}
           gh release create "v$VERSION" \
+            --target "$GITHUB_SHA" \
             --title "v$VERSION" \
             --notes "${{ steps.changelog.outputs.body }}" \
             src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg \

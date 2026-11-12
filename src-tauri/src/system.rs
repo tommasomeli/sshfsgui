@@ -2,6 +2,7 @@ use std::sync::OnceLock;
 
 use tokio::process::Command;
 
+use crate::bundled::bundled_sshfs;
 use crate::types::{FuseStatus, InstallInstructions, SshfsStatus, SystemStatus};
 
 /// Resolves a command to an absolute path using the user's login shell environment
@@ -64,7 +65,11 @@ async fn is_fuse_t_installed() -> bool {
 }
 
 pub async fn check_system_requirements() -> SystemStatus {
-    let sshfs_path = find_command("sshfs").await;
+    let bundled = bundled_sshfs();
+    let sshfs_path = match &bundled {
+        Some(b) => Some(b.sshfs.to_string_lossy().into_owned()),
+        None => find_command("sshfs").await,
+    };
     let sshfs_version = match &sshfs_path {
         Some(p) => get_version(p).await,
         None => None,
@@ -76,7 +81,7 @@ pub async fn check_system_requirements() -> SystemStatus {
             version: sshfs_version,
         },
         fuse_t: FuseStatus {
-            installed: is_fuse_t_installed().await,
+            installed: bundled.is_some() || is_fuse_t_installed().await,
         },
         macfuse: FuseStatus {
             installed: is_macfuse_installed().await,

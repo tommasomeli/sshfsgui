@@ -21,10 +21,13 @@ pub fn settings_save(
 ) -> Result<(), String> {
     storage::save_settings(&settings)?;
 
-    if settings.launch_at_login {
-        let _ = app.autolaunch().enable();
-    } else {
-        let _ = app.autolaunch().disable();
+    // Development builds leave the login item alone, so it keeps pointing at the installed app.
+    if crate::is_packaged() {
+        if settings.launch_at_login {
+            let _ = app.autolaunch().enable();
+        } else {
+            let _ = app.autolaunch().disable();
+        }
     }
 
     let lang = resolve_language(settings.language);

@@ -14,14 +14,24 @@
       {
         "label": "main",
         "title": "SSHFS GUI",
-        "width": 900,
-        "height": 700,
-        "minWidth": 600,
-        "minHeight": 400,
+        "width": 960,
+        "height": 620,
+        "minWidth": 760,
+        "minHeight": 420,
         "titleBarStyle": "Overlay",
         "hiddenTitle": true,
         "acceptFirstMouse": true,
-        "backgroundColor": "#0a0a0a"
+        "transparent": true,
+        "trafficLightPosition": {
+          "x": 18,
+          "y": 22
+        },
+        "windowEffects": {
+          "effects": [
+            "sidebar"
+          ],
+          "state": "followsWindowActiveState"
+        }
       }
     ],
     "security": {
@@ -43,6 +53,9 @@
       "icons/icon.ico"
     ],
     "category": "Utility",
-    "shortDescription": "A simple SSHFS GUI for macOS"
+    "shortDescription": "A simple SSHFS GUI for macOS",
+    "macOS": {
+      "minimumSystemVersion": "12.0"
+    }
   }
 }

@@ -18,13 +18,14 @@
 </p>
 
 <p align="center">
-  <img src="resources/screenshot.png" width="720" alt="SSHFS GUI main window with saved servers, favorites filter, and mount actions">
+  <img src="resources/screenshot.png" width="720" alt="SSHFS GUI main window with the sidebar, a multiple selection and the detail panel">
 </p>
 
 ---
 
 ## Features
 
+- **Batteries included** - sshfs and FUSE-T are built in, no extra installs
 - **Multiple servers** - Save, edit, clone, and organize as many SSH connections as you need
 - **One-click mount/unmount** - Mount remote directories to local folders with a single click
 - **Favorites & filters** - Star your most-used servers, filter by favorites or mounted status
@@ -33,49 +34,14 @@
 - **Multiple auth methods** - SSH agent, SSH key, or password authentication
 - **Menu bar mode** - Optionally run as a menu bar app with quick access from the tray icon
 - **Import / Export** - Transfer server configurations and settings between machines via JSON
-- **Bulk actions** - Select multiple servers to clone, export, or delete at once
+- **Bulk actions** - Select servers with checkboxes or by dragging, then clone, export, or delete them at once
 - **Multi-language** - English and Italian, with automatic detection or manual override
-- **Native macOS look** - Dark mode, custom title bar, smooth animations
+- **Native macOS look** - Translucent sidebar, system light/dark theme and accent color, native menus
 - **Reveal in Finder** - Open mounted directories directly in Finder
 
 ## Requirements
 
-SSHFS GUI needs a **FUSE stack** on macOS: a FUSE implementation plus an `sshfs` binary. Homebrew's core formula `sshfs` depends on Linux (`libfuse`) and **does not install on macOS**. Use the references below, or install via Homebrew (pick one stack).
-
-**References:** [FUSE-T](https://github.com/macos-fuse-t/fuse-t) · [FUSE-T SSHFS](https://github.com/macos-fuse-t/sshfs) · [macFUSE](https://macfuse.io/) · [Homebrew](https://brew.sh)
-
-### Install with Homebrew
-
-#### Option A - FUSE-T + SSHFS (no kernel extension)
-
-Uses NFS locally instead of a kext. Usually the simplest path on recent macOS.
-
-```bash
-brew tap macos-fuse-t/homebrew-cask
-brew install --cask fuse-t fuse-t-sshfs
-```
-
-On some macOS versions with FUSE-T, Finder may need extra `sshfs` options (e.g. `-o nonamedattr`). Add them in the app's SSHFS extra options if you hit mount or copy issues.
-
-#### Option B - macFUSE + SSHFS (kernel extension)
-
-Use this if you need the classic macFUSE stack or already rely on it.
-
-1. Install [macFUSE](https://macfuse.io/) (allow the system extension when macOS prompts you).
-
-   ```bash
-   brew install --cask macfuse
-   ```
-
-2. Install **SSHFS for macFUSE** (separate from Homebrew core `sshfs`):
-
-   ```bash
-   brew install gromgit/fuse/sshfs-mac
-   ```
-
-This tap targets macFUSE. Upstream SSHFS is older than on Linux: see the formula caveats. Alternatively, install SSHFS from the [macFUSE / SSHFS project](https://github.com/macfuse/sshfs) if you prefer their official packages.
-
-The app checks for these dependencies and shows guidance if `sshfs` or FUSE is missing.
+macOS 12 or later. SSHFS GUI ships with everything it needs to mount: `sshfs` and [FUSE-T](https://www.fuse-t.org), which works without kernel extensions. Nothing else to install, and it runs alongside any sshfs, macFUSE or FUSE-T already on your Mac.
 
 ## Installation
 
@@ -85,7 +51,7 @@ Download the latest `.dmg` from [Releases](https://github.com/tommasomeli/sshfsg
 
 ### Adding a server
 
-1. Click **+ New** in the top bar
+1. Click **+** in the toolbar (or press `⌘N`)
 2. Fill in the connection details:
    - **Name** - A friendly label (e.g. "Production DB")
    - **Host** - Hostname or IP address
@@ -101,17 +67,17 @@ Download the latest `.dmg` from [Releases](https://github.com/tommasomeli/sshfsg
 
 ### Mounting
 
-Click **Mount** on any server card. The green dot indicates an active mount. Click **Unmount** to disconnect.
+Click **Mount** on any server row. A green dot marks an active mount; click **Unmount** to disconnect. The folder icon reveals the mount in Finder.
 
-Use the folder icon to reveal the mounted directory in Finder.
+Click a row to open its details in the side panel, which you can resize by dragging its edge. Double-click a row to edit it, right-click for the context menu.
 
-### Bulk operations
+### Selecting several servers
 
-Use the checkboxes on each server card to select multiple servers. The bottom bar shows available actions: **Clone**, **Export**, and **Delete**.
+Tick the checkboxes or drag a rectangle over the list. The bar above the list then offers **Clone**, **Export**, and **Delete** for the selection.
 
 ### Settings
 
-Open settings via the gear icon or `⌘,`:
+Open settings from the sidebar or with `⌘,`:
 
 - **Language** - System, English, or Italian
 - **Launch at login** - Start the app when you log in
@@ -121,7 +87,7 @@ Open settings via the gear icon or `⌘,`:
 
 ## Development
 
-Requirements: [Node.js](https://nodejs.org/) 20+, [pnpm](https://pnpm.io/) 10+, and a stable [Rust](https://www.rust-lang.org/tools/install) toolchain.
+Requirements: [Node.js](https://nodejs.org/) 20+, [pnpm](https://pnpm.io/) 10+, a stable [Rust](https://www.rust-lang.org/tools/install) toolchain, and for release builds `meson` and `ninja` (`brew install meson ninja`).
 
 ```bash
 pnpm install
@@ -133,6 +99,12 @@ pnpm run icons
 ```
 
 `pnpm run icons` regenerates `src-tauri/icons` from `resources/icon.svg`.
+
+Release builds run [`scripts/fuse-t/build-bundled-sshfs.sh`](scripts/fuse-t/build-bundled-sshfs.sh) first: it downloads pinned sources, builds sshfs against FUSE-T with a static GLib, and stages the files that go inside the app. `pnpm dev` uses the `sshfs` found on your system.
+
+`pnpm demo:seed` swaps your servers for a demo set (for screenshots) and `pnpm demo:restore` puts yours back. Quit the app before running either.
+
+Releases are published from GitHub on a push to `main`, or from a Mac with `pnpm release:local`: see [Releases](CONTRIBUTING.md#releases).
 
 Shared metadata lives in `src/shared/`:
 - `app-info.json` - product name, app id, slug, developer, GitHub URL, description, export format version
@@ -158,3 +130,5 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Bug reports and feature requests use the
 ## License
 
 [ISC](LICENSE) - Tommaso Meli
+
+The app bundles third-party software under its own licenses: [sshfs](https://github.com/macos-fuse-t/sshfs) (GPL-2.0), [FUSE-T](https://www.fuse-t.org) (FUSE-T license, libfuse under LGPL) and [GLib](https://gitlab.gnome.org/GNOME/glib) (LGPL-2.1). License texts and source links are in `SSHFS GUI.app/Contents/Resources/third-party/`.

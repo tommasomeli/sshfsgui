@@ -4,6 +4,7 @@ use tokio::io::AsyncWriteExt;
 use tokio::process::Command;
 use tokio::sync::OnceCell;
 
+use crate::bundled::{bundled_sshfs, NFS_SERVER_ENV};
 use crate::paths::expand_home;
 use crate::sshfs_args::build_sshfs_args;
 use crate::storage;
@@ -28,6 +29,9 @@ async fn resolve_sshfs_path() -> Result<String, String> {
 }
 
 async fn get_sshfs_path() -> Result<String, String> {
+    if let Some(bundled) = bundled_sshfs() {
+        return Ok(bundled.sshfs.to_string_lossy().into_owned());
+    }
     if let Some(p) = SSHFS_PATH.get() {
         return Ok(p.clone());
     }
@@ -71,7 +75,11 @@ pub async fn mount_server(config: &ServerConfig) -> Result<(), String> {
     };
     let args = build_sshfs_args(&for_sshfs, password.is_some());
 
-    let mut child = Command::new(&sshfs_path)
+    let mut command = Command::new(&sshfs_path);
+    if let Some(bundled) = bundled_sshfs() {
+        command.env(NFS_SERVER_ENV, &bundled.nfs_server);
+    }
+    let mut child = command
         .args(&args)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())

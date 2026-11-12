@@ -6,11 +6,6 @@
     "noServers": "No servers yet.",
     "noMatch": "No servers match your filters."
   },
-  "tabs": {
-    "all": "All ({{count}})",
-    "favorites": "Favorites ({{count}})",
-    "mounted": "Mounted ({{count}})"
-  },
   "server": {
     "mount": "Mount",
     "unmount": "Unmount",
@@ -27,10 +22,9 @@
     "clonedMultiple": "Cloned {{count}} servers",
     "deletedMultiple": "Deleted {{count}} servers",
     "deleteMultipleConfirm": "Delete {{count}} selected servers? Active ones will be unmounted.",
+    "deleteAllConfirm": "Delete all {{count}} servers? Active ones will be unmounted.",
     "selectAll": "Select all",
-    "deselectAll": "Deselect all",
-    "deleteAll": "Delete all",
-    "deleteAllConfirm": "Delete all {{count}} servers? Active ones will be unmounted."
+    "deselectAll": "Deselect all"
   },
   "tooltip": {
     "refresh": "Refresh",
@@ -155,5 +149,17 @@
     "download": "Download",
     "upToDate": "You're up to date!",
     "checkFailed": "Could not check for updates. Please try again later."
+  },
+  "sidebar": {
+    "title": "Servers",
+    "all": "All Servers",
+    "favorites": "Favorites",
+    "mounted": "Mounted"
+  },
+  "detail": {
+    "mounted": "Mounted",
+    "notMounted": "Not mounted",
+    "count_one": "{{count}} server",
+    "count_other": "{{count}} servers"
   }
 }
