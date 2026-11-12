@@ -1,6 +1,6 @@
 {
   "name": "sshfsgui",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A simple SSHFS GUI for macOS",
   "type": "module",
   "author": "tommasomeli",
@@ -15,12 +15,12 @@
     "dev": "pnpm run sync:meta && tauri dev",
     "dev:frontend": "vite",
     "clean:bundle": "tsx scripts/clean-bundle-artifacts.ts",
-    "build": "pnpm run sync:meta && tauri build && pnpm run clean:bundle",
+    "build": "pnpm run sync:meta && scripts/fuse-t/build-bundled-sshfs.sh && tauri build --config src-tauri/tauri.bundled-sshfs.conf.json && pnpm run clean:bundle",
     "build:frontend": "vite build",
     "build:mac": "pnpm run build",
-    "build:mac:arm64": "pnpm run sync:meta && tauri build --target aarch64-apple-darwin && pnpm run clean:bundle",
-    "build:mac:x64": "pnpm run sync:meta && tauri build --target x86_64-apple-darwin && pnpm run clean:bundle",
-    "build:mac:universal": "pnpm run sync:meta && tauri build --target universal-apple-darwin && pnpm run clean:bundle",
+    "build:mac:arm64": "pnpm run sync:meta && scripts/fuse-t/build-bundled-sshfs.sh arm64 && tauri build --target aarch64-apple-darwin --config src-tauri/tauri.bundled-sshfs.conf.json && pnpm run clean:bundle",
+    "build:mac:x64": "pnpm run sync:meta && scripts/fuse-t/build-bundled-sshfs.sh x86_64 && tauri build --target x86_64-apple-darwin --config src-tauri/tauri.bundled-sshfs.conf.json && pnpm run clean:bundle",
+    "build:mac:universal": "pnpm run sync:meta && scripts/fuse-t/build-bundled-sshfs.sh universal && tauri build --target universal-apple-darwin --config src-tauri/tauri.bundled-sshfs.conf.json && pnpm run clean:bundle",
     "build:mac:all": "pnpm run build:mac:arm64 && pnpm run build:mac:x64",
     "icons": "tsx scripts/generate-icons.ts",
     "demo:seed": "tsx scripts/demo-data.ts seed",
@@ -30,7 +30,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "sshfs:bundle": "scripts/fuse-t/build-bundled-sshfs.sh"
   },
   "repository": {
     "type": "git",

@@ -91,6 +91,15 @@ jobs:
           IDENTITY=$(security find-identity -v -p codesigning "$KEYCHAIN_PATH" | head -1 | grep -o '"[^"]*"' | tr -d '"')
           echo "APPLE_SIGNING_IDENTITY=$IDENTITY" >> "$GITHUB_ENV"
 
+      - name: Install sshfs build tools
+        run: brew install meson ninja
+
+      - name: Cache bundled sshfs sources and static glib
+        uses: actions/cache@v4
+        with:
+          path: .cache/fuse-t
+          key: fuse-t-${{ runner.os }}-${{ hashFiles('scripts/fuse-t/build-bundled-sshfs.sh') }}
+
       - name: Install dependencies
         run: |
           if [ -f pnpm-lock.yaml ]; then

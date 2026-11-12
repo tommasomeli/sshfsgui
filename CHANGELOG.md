@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+## 1.2.0
+
+- sshfs and FUSE-T built into the app: nothing else to install, and it coexists with any sshfs, macFUSE or FUSE-T already installed
+- Mac-native interface: translucent sidebar with filters, system light/dark theme and accent color
+- Server list with inline actions and a resizable detail panel
+- Multiple selection with checkboxes or by dragging, with bulk clone, export and delete
+- Native context menus and keyboard shortcuts (⌘N, ⌘F, ⌘A, ⌘⌫, Enter, arrow keys)
+
 ## 1.1.0
 
 - Migrated the app shell from Electron to Tauri 2
