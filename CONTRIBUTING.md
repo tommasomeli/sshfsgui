@@ -74,6 +74,6 @@ Push to `main`. The [`release.yml`](./.github/workflows/release.yml) workflow pu
 
 Requires a `Developer ID Application` identity in the login keychain, plus `meson` and `ninja` (`brew install meson ninja`).
 
-1. Commit the version bump on `main`.
-2. Run `pnpm release:local`. The first run asks for the Apple ID and an app-specific password and saves them in the keychain as `apple-notary`; later runs read them from there. The script builds, signs, notarizes and checks both DMGs, shows the notes and asks before publishing.
-3. Push `main`. The workflow finds the published release and skips its own build.
+1. Commit the version bump on a branch and push it.
+2. Run `pnpm release:local`. The first run asks for the Apple ID and an app-specific password and saves them in the keychain as `sshfsgui-notary`; later runs read them from there. The script builds, signs, notarizes and checks both DMGs, shows the notes and asks before publishing.
+3. Merge the branch into `main` with a merge commit. The workflow finds the published release and skips its own build.

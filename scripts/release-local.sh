@@ -4,24 +4,25 @@
 #
 # Credentials come from the login keychain:
 #   - a "Developer ID Application" signing identity (override with APPLE_SIGNING_IDENTITY);
-#   - a generic password item named "apple-notary" (override with NOTARY_ITEM) whose account is
+#   - a generic password item named "sshfsgui-notary" (override with NOTARY_ITEM) whose account is
 #     the Apple ID and whose password is an app-specific password. The first run creates it.
 #
-# Run it on main with the version bump committed, then push main: the release workflow finds
-# the published release and skips its own build.
+# Run it on the branch that carries the version bump, once that branch is pushed. Merging it
+# into main afterwards starts the release workflow, which finds the release and skips its build.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-NOTARY_ITEM="${NOTARY_ITEM:-apple-notary}"
+NOTARY_ITEM="${NOTARY_ITEM:-sshfsgui-notary}"
 VERSION="$(node -p "require('./package.json').version")"
 TAG="v$VERSION"
 
 fail() { echo "error: $*" >&2; exit 1; }
 
-[[ "$(git branch --show-current)" == main ]] || fail "run this on main"
 [[ -z "$(git status --porcelain)" ]] || fail "commit or stash your changes first"
+git fetch -q origin
+[[ -n "$(git branch -r --contains HEAD)" ]] || fail "push this branch first, the release tag points at its last commit"
 grep -q "^## ${VERSION//./\\.}\$" CHANGELOG.md || fail "CHANGELOG.md has no '## $VERSION' section"
 if gh release view "$TAG" >/dev/null 2>&1; then fail "$TAG is already published"; fi
 
@@ -78,4 +79,4 @@ read -rp "Publish $TAG with these notes and DMGs? [y/N] " answer
 git tag "$TAG"
 git push origin "$TAG"
 gh release create "$TAG" --verify-tag --title "$TAG" --notes "$notes" "${dmgs[@]}"
-echo "Published $TAG. Push main now: the release workflow sees $TAG and skips its build."
+echo "Published $TAG. Merge the branch into main: the release workflow sees $TAG and skips its build."
